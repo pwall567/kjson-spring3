@@ -5,10 +5,10 @@
 
   <artifactId>kjson-spring3</artifactId>
   <version>4.4.2</version>
-  <name>Spring JSON message converter for kjson</name>
-  <description>Message converter which simplifies use of kjson by Spring applications</description>
+  <name>Spring Boot 3 JSON message converter for kjson</name>
+  <description>Message converter which simplifies use of kjson by Spring Boot 3 applications</description>
   <packaging>jar</packaging>
-  <url>https://github.com/pwall567/kjson-spring</url>
+  <url>https://github.com/pwall567/kjson-spring3</url>
 
   <parent>
     <groupId>io.kjson</groupId>
@@ -35,8 +35,8 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git://github.com/pwall567/kjson-spring.git</connection>
-    <url>https://github.com/pwall567/kjson-spring.git</url>
+    <connection>scm:git:git://github.com/pwall567/kjson-spring3.git</connection>
+    <url>https://github.com/pwall567/kjson-spring3.git</url>
   </scm>
 
   <developers>
