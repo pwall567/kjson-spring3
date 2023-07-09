@@ -124,7 +124,7 @@ structure.
 
 ## Dependency Specification
 
-The latest version of the library is 4.4.2 (the version number of this library matches the version of `kjson` with which
+The latest version of the library is 5.0 (the version number of this library matches the version of `kjson` with which
 it was built), and it may be obtained from the Maven Central repository.
 
 This version was built using version 6.0.2 of Spring, and version 3.0.2 of Spring Boot.
@@ -134,18 +134,18 @@ This version was built using version 6.0.2 of Spring, and version 3.0.2 of Sprin
     <dependency>
       <groupId>io.kjson</groupId>
       <artifactId>kjson-spring3</artifactId>
-      <version>4.4.2</version>
+      <version>5.0</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'io.kjson:kjson-spring3:4.4.2'
+    implementation 'io.kjson:kjson-spring3:5.0'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("io.kjson:kjson-spring3:4.4.2")
+    implementation("io.kjson:kjson-spring3:5.0")
 ```
 
 Peter Wall
 
-2023-06-14
+2023-07-09
