@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/pwall567/kjson-spring3.svg?branch=main)](https://travis-ci.com/github/pwall567/kjson-spring3)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Kotlin](https://img.shields.io/static/v1?label=Kotlin&message=v1.7.21&color=7f52ff&logo=kotlin&logoColor=7f52ff)](https://github.com/JetBrains/kotlin/releases/tag/v1.7.21)
+[![Kotlin](https://img.shields.io/static/v1?label=Kotlin&message=v1.8.22&color=7f52ff&logo=kotlin&logoColor=7f52ff)](https://github.com/JetBrains/kotlin/releases/tag/v1.8.22)
 [![Maven Central](https://img.shields.io/maven-central/v/io.kjson/kjson-spring3?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.kjson%22%20AND%20a:%22kjson-spring3%22)
 
 Spring Boot 3 JSON message converter for [`kjson`](https://github.com/pwall567/kjson).
@@ -124,28 +124,28 @@ structure.
 
 ## Dependency Specification
 
-The latest version of the library is 6.0 (the version number of this library matches the version of `kjson` with which
+The latest version of the library is 6.1 (the version number of this library matches the version of `kjson` with which
 it was built), and it may be obtained from the Maven Central repository.
 
-This version was built using version 6.0.2 of Spring, and version 3.0.2 of Spring Boot.
+This version was built using version 6.0.11 of Spring, and version 3.1.2 of Spring Boot.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>io.kjson</groupId>
       <artifactId>kjson-spring3</artifactId>
-      <version>6.0</version>
+      <version>6.1</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'io.kjson:kjson-spring3:6.0'
+    implementation 'io.kjson:kjson-spring3:6.1'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("io.kjson:kjson-spring3:6.0")
+    implementation("io.kjson:kjson-spring3:6.1")
 ```
 
 Peter Wall
 
-2023-07-09
+2023-07-25
