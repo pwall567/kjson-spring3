@@ -68,11 +68,7 @@ class JSONSpring(
     private val level: Level = jsonLogLevel ?: Level.DEBUG
 
     override fun readInternal(resolvedType: Type, reader: Reader): Any {
-        val bufferedReader = reader.buffered()
-        val json = JSONStreamer(config.parseOptions).apply {
-            while (!isClosed)
-                accept(bufferedReader.read())
-        }.result
+        val json = JSONStreamer.parse(reader.buffered(), config.parseOptions)
         log?.log(level) { "JSON Input: ${json.elidedValue(exclude = jsonLogExclude)}" }
         return json?.fromJSONValue(resolvedType, config) ?: throw JSONException("Message may not be \"null\"")
     }
