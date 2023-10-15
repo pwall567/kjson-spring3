@@ -44,11 +44,9 @@ open class CustomConfiguration {
     @Bean open fun jsonConfig(): JSONConfig {
         return JSONConfig {
             toJSON<ResponseData> {
-                it?.let {
-                    JSONObject.build {
-                        add("D", it.date.toString())
-                        add("X", it.extra)
-                    }
+                JSONObject.build {
+                    add("D", it.date.toString())
+                    add("X", it.extra)
                 }
             }
             fromJSON { value ->
