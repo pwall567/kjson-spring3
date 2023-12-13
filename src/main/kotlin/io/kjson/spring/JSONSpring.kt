@@ -29,36 +29,35 @@ import java.io.Reader
 import java.io.Writer
 import java.lang.reflect.Type
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.converter.json.AbstractJsonHttpMessageConverter
-import org.springframework.stereotype.Service
 
 import io.kjson.JSON.appendJSONValue
 import io.kjson.JSON.elidedValue
+import io.kjson.JSON.toJSON
 import io.kjson.JSONConfig
 import io.kjson.JSONException
 import io.kjson.JSONSerializer
-import io.kjson.JSONStreamer
 import io.kjson.JSONStringify.appendJSON
+import io.kjson.JSONValue
 import io.kjson.fromJSONValue
+import io.kjson.parser.Parser
 import net.pwall.log.Level
 import net.pwall.log.Logger
 import net.pwall.log.LoggerFactory
 
 /**
  * Spring message converter to convert messages to and from JSON using the [kjson](https://github.com/pwall567/kjson)
- * library.
+ * library.  This class is expected to be instantiated by the [JSONSpringAutoConfiguration] class, but it may be
+ * configured separately if required.
  *
  * @author  Peter Wall
  */
-@Service
-@Suppress("unused")
-class JSONSpring(
-    @Autowired(required = false) jsonConfig: JSONConfig?,
-    @Autowired(required = false) jsonLogFactory: LoggerFactory<*>?,
-    @Autowired(required = false) jsonLogName: String?,
-    @Autowired(required = false) jsonLogLevel: Level?,
-    @Autowired(required = false) val jsonLogExclude: Collection<String>?,
+open class JSONSpring(
+    jsonConfig: JSONConfig?,
+    jsonLogFactory: LoggerFactory<*>?,
+    jsonLogName: String?,
+    jsonLogLevel: Level?,
+    private val jsonLogExclude: Collection<String>?,
 ) : AbstractJsonHttpMessageConverter() {
 
     private val config: JSONConfig = jsonConfig ?: JSONConfig.defaultConfig
@@ -68,8 +67,8 @@ class JSONSpring(
     private val level: Level = jsonLogLevel ?: Level.DEBUG
 
     override fun readInternal(resolvedType: Type, reader: Reader): Any {
-        val json = JSONStreamer.parse(reader.buffered(), config.parseOptions)
-        log?.log(level) { "JSON Input: ${json.elidedValue(exclude = jsonLogExclude)}" }
+        val json = Parser.parse(reader.readText(), config.parseOptions)
+        log?.log(level) { "JSON Input: ${json.displayValue()}" }
         return json?.fromJSONValue(resolvedType, config) ?: throw JSONException("Message may not be \"null\"")
     }
 
@@ -77,12 +76,17 @@ class JSONSpring(
         log.let {
             if (it != null && it.isEnabled(level)) {
                 val json = JSONSerializer.serialize(o, config)
-                it.log(level) { "JSON Output: ${json.elidedValue(exclude = jsonLogExclude)}" }
+                it.log(level) { "JSON Output: ${json.displayValue()}" }
                 writer.appendJSONValue(json)
             }
             else
                 writer.appendJSON(o, config)
         }
     }
+
+    private fun JSONValue?.displayValue(): String = if (jsonLogExclude != null)
+        elidedValue(exclude = jsonLogExclude)
+    else
+        toJSON()
 
 }

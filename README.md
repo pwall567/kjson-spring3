@@ -19,6 +19,9 @@ Boot 3.x and Spring 6.x.
 
 ## Quick Start
 
+**NOTE:** Version 7.1.1 of this library uses the Spring Boot Auto-Configuration mechanism, meaning that the references
+to component scanning in the notes below may be ignored (and will be removed from future versions).
+
 To direct a Spring Boot 3 application to use `kjson` for serialization and deserialization of HTTP(S) requests and
 responses, simply include the `kjson-spring3` library in the build, and then ensure that the `io.kjson.spring` package
 is included in the Spring component scan:
@@ -42,7 +45,7 @@ to retain the default behaviour, the current package must be also specified, alo
 
 The `kjson` serialization and deserialization functions all take an optional
 [`JSONConfig`](https://github.com/pwall567/kjson/blob/main/USERGUIDE.md#configuration) object.
-The `JSONConfig` to be used by the `kjson-spring` library may be provided in the usual Spring manner:
+The `JSONConfig` to be used by the `kjson-spring3` library may be provided in the usual Spring manner:
 ```kotlin
 @Configuration
 open class SpringAppConfig {
@@ -64,8 +67,8 @@ If no `JSONConfig` is provided, the `JSONConfig.defaultConfig` will be used.
 Client REST calls using the `RestTemplate` class can also make use of the `kjson` serialization and deserialization
 functions.
 When the `RestTemplate` is obtained from the default `RestTemplateBuilder`, it will be configured with all of the
-`HttpMessageConverter` instances that it locates in the component scan &ndash; that will include the `kjson`
-converter if the component scan is configured as described above.
+`HttpMessageConverter` instances currently configured &ndash; that will include the `kjson` converter added during
+auto-configuration.
 
 The following line will get the default `RestTemplateBuilder`:
 ```kotlin
@@ -124,28 +127,28 @@ structure.
 
 ## Dependency Specification
 
-The latest version of the library is 7.1 (the version number of this library matches the version of `kjson` with which
+The latest version of the library is 7.1.1 (the version number of this library matches the version of `kjson` with which
 it was built), and it may be obtained from the Maven Central repository.
 
-This version was built using version 6.0.13 of Spring, and version 3.1.4 of Spring Boot.
+This version was built using version 6.1.1 of Spring, and version 3.2.0 of Spring Boot.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>io.kjson</groupId>
       <artifactId>kjson-spring3</artifactId>
-      <version>7.1</version>
+      <version>7.1.1</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'io.kjson:kjson-spring3:7.1'
+    implementation 'io.kjson:kjson-spring3:7.1.1'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("io.kjson:kjson-spring3:7.1")
+    implementation("io.kjson:kjson-spring3:7.1.1")
 ```
 
 Peter Wall
 
-2023-10-15
+2023-12-14
