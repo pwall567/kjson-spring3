@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 The major and minor version numbers of this repository (but not patch numbers) match the version numbers of the
 [`kjson`](https://github.com/pwall567/kjson) library used by this Spring library.
 
+## [7.1.2] - 2023-12-14
+### Changed
+- `JSONSpringAutoConfiguration`: Added priority annotation
+
 ## [7.1.1] - 2023-12-14
 ### Added
 - `JSONSpringAutoConfiguration`: Remove the requirement for `@componentScan`
