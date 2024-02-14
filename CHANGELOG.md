@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 The major and minor version numbers of this repository (but not patch numbers) match the version numbers of the
 [`kjson`](https://github.com/pwall567/kjson) library used by this Spring library.
 
+## [7.5] - 2024-02-14
+### Changed
+- `JSONSpring`: Improved logging (always log input that fails parsing as level ERROR)
+- `pom.xml`: Updated version of kjson
+
 ## [7.1.3] - 2024-01-26
 ### Added
 - `org.springframework.boot.autoconfigure.AutoConfiguration.imports`: New autoconfiguration file for Spring Boot 3

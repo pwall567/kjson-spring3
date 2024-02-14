@@ -56,6 +56,7 @@ import io.kjson.parseJSON
 import io.kjson.stringifyJSON
 import net.pwall.log.LogList
 import net.pwall.log.isDebug
+import net.pwall.log.isError
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(classes = [SpringTestConfiguration::class])
@@ -78,6 +79,7 @@ class SpringTest {
 
     @Test fun `should use kjson for input`() {
         LogList().use { logList ->
+            val expectedOutput = """{"DATE":"2022-07-04","extra":"0e457a9e-fb40-11ec-84d9-a324b304f4f9"}"""
             mockMvc.post("/testendpoint") {
                 contentType = MediaType.APPLICATION_JSON
                 content = """{"ID":"0e457a9e-fb40-11ec-84d9-a324b304f4f9","name":"Me"}"""
@@ -85,11 +87,39 @@ class SpringTest {
             }.andExpect {
                 status { isOk() }
                 content {
-                    string("""{"DATE":"2022-07-04","extra":"0e457a9e-fb40-11ec-84d9-a324b304f4f9"}""")
+                    string(expectedOutput)
                 }
             }
             assertTrue(logList.any {
                 it.name == "io.kjson.spring.JSONSpring" && it isDebug """JSON Input: {"ID":"****","name":"Me"}"""
+            })
+            assertTrue(logList.any {
+                it.name == "io.kjson.spring.JSONSpring" && it isDebug "JSON Output: $expectedOutput"
+            })
+        }
+    }
+
+    @Test fun `should log error on invalid JSON input`() {
+        LogList().use { logList ->
+            mockMvc.post("/testendpoint") {
+                contentType = MediaType.APPLICATION_JSON
+                content = """{"ID":"12345","name":"Me"}"""
+                accept(MediaType.APPLICATION_JSON)
+            }.andExpect {
+                status { isBadRequest() }
+                content {
+                    string("\"ERROR\"")
+                }
+            }
+            assertTrue(logList.any {
+                it.name == "io.kjson.spring.JSONSpring" && it isError """JSON Input: {"ID":"****","name":"Me"}"""
+            })
+            assertTrue(logList.any {
+                it.name == "io.kjson.spring.JSONSpring" &&
+                        it isError "Error deserializing \"12345\" as java.util.UUID at /ID"
+            })
+            assertTrue(logList.any {
+                it.name == "io.kjson.spring.JSONSpring" && it isDebug "JSON Output: \"ERROR\""
             })
         }
     }

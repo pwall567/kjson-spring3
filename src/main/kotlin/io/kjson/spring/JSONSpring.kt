@@ -2,7 +2,7 @@
  * @(#) JSONSpring.kt
  *
  * kjson-spring3  Spring Boot 3 JSON message converter for kjson
- * Copyright (c) 2022, 2023 Peter Wall
+ * Copyright (c) 2022, 2023, 2024 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -67,9 +67,19 @@ open class JSONSpring(
     private val level: Level = jsonLogLevel ?: Level.DEBUG
 
     override fun readInternal(resolvedType: Type, reader: Reader): Any {
-        val json = Parser.parse(reader.readText(), config.parseOptions)
+        val json = Parser.parse(reader.readText(), config.parseOptions) ?:
+                throw JSONException("JSON may not be \"null\"")
+        val result = try {
+            json.fromJSONValue(resolvedType, config)
+        } catch (je: JSONException) {
+            log?.let {
+                it.error { "JSON Input: ${json.displayValue()}" }
+                it.error { je.message }
+            }
+            throw je
+        }
         log?.log(level) { "JSON Input: ${json.displayValue()}" }
-        return json?.fromJSONValue(resolvedType, config) ?: throw JSONException("Message may not be \"null\"")
+        return result ?: throw JSONException("Deserialized JSON may not be null")
     }
 
     override fun writeInternal(o: Any, type: Type?, writer: Writer) {
