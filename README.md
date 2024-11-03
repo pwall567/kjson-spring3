@@ -1,8 +1,8 @@
 # kjson-spring3
 
-[![Build Status](https://travis-ci.com/pwall567/kjson-spring3.svg?branch=main)](https://travis-ci.com/github/pwall567/kjson-spring3)
+[![Build Status](https://github.com/pwall567/kjson-spring3/actions/workflows/build.yml/badge.svg)](https://github.com/pwall567/kjson-spring3/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Kotlin](https://img.shields.io/static/v1?label=Kotlin&message=v1.8.22&color=7f52ff&logo=kotlin&logoColor=7f52ff)](https://github.com/JetBrains/kotlin/releases/tag/v1.8.22)
+[![Kotlin](https://img.shields.io/static/v1?label=Kotlin&message=v1.9.24&color=7f52ff&logo=kotlin&logoColor=7f52ff)](https://github.com/JetBrains/kotlin/releases/tag/v1.9.24)
 [![Maven Central](https://img.shields.io/maven-central/v/io.kjson/kjson-spring3?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.kjson%22%20AND%20a:%22kjson-spring3%22)
 
 Spring Boot 3 JSON message converter for [`kjson`](https://github.com/pwall567/kjson).
@@ -93,7 +93,7 @@ and:
 `kjson-spring` can be configured to log all messages processed by the JSON converter, input and output.
 To make use of this functionality, the `jsonLogFactory` must be configured, as follows:
 ```kotlin
-    @Bean open fun jsonLogFactory(): LoggerFactory<*> = DynamicLoggerFactory(Level.DEBUG)
+    @Bean open fun jsonLogFactory(): LoggerFactory<*> = Log.getDefaultLoggerFactory()
 ```
 
 The `LoggerFactory` in this case is from the [log-front-api](https://github.com/pwall567/log-front-api) library;
@@ -114,6 +114,13 @@ The name of the `Logger` may also be specified:
 The default name is the name of the class instantiating the `Logger`, which in this case is
 `io.kjson.spring.JSONSpring`.
 
+And the `Level` to be used when logging the messages may be specified by:
+```kotlin
+    @Bean open fun jsonLogLevel(): Level = Level.INFO
+```
+The default is `DEBUG`, but when errors are encountered in deserialization, the input will be logged with `Level`
+`ERROR`, followed by the error message, regardless of the level specified in the above bean.
+
 ## Log Eliding
 
 When logging JSON content, it is often important to ensure that Personally Identifiable Information (PII) is not
@@ -125,30 +132,45 @@ structure.
     @Bean open fun jsonLogExclude(): Collection<String> = setOf("creditCardNumber", "licenceNumber")
 ```
 
+The following will log all input and output with `Level` `INFO`, eliding all fields named `accountNumber`:
+```kotlin
+import org.springframework.context.annotation.Configuration
+import net.pwall.log.Level
+import net.pwall.log.Log
+import net.pwall.log.LogggerFactory
+
+@Configuration
+open class JSONConfiguration {
+    @Bean open fun jsonLogFactory(): LoggerFactory<*> = Log.getDefaultLoggerFactory()
+    @Bean open fun jsonLogLevel(): Level = Level.INFO
+    @Bean open fun jsonLogExclude(): Set<String> = setOf("accountNumber")
+}
+```
+
 ## Dependency Specification
 
-The latest version of the library is 7.5 (the version number of this library matches the version of `kjson` with which
+The latest version of the library is 9.1 (the version number of this library matches the version of `kjson` with which
 it was built), and it may be obtained from the Maven Central repository.
 
-This version was built using version 6.1.3 of Spring, and version 3.2.2 of Spring Boot.
+This version was built using version 6.1.12 of Spring, and version 3.3.3 of Spring Boot.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>io.kjson</groupId>
       <artifactId>kjson-spring3</artifactId>
-      <version>7.5</version>
+      <version>9.1</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'io.kjson:kjson-spring3:7.5'
+    implementation 'io.kjson:kjson-spring3:9.1'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("io.kjson:kjson-spring3:7.5")
+    implementation("io.kjson:kjson-spring3:9.1")
 ```
 
 Peter Wall
 
-2024-02-14
+2024-11-03

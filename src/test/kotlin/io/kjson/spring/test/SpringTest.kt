@@ -2,7 +2,7 @@
  * @(#) SpringTest.kt
  *
  * kjson-spring3  Spring Boot 3 JSON message converter for kjson
- * Copyright (c) 2022, 2023 Peter Wall
+ * Copyright (c) 2022, 2023, 2024 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -53,6 +53,7 @@ import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
 
 import io.kjson.parseJSON
+import io.kjson.spring.JSONSpring
 import io.kjson.stringifyJSON
 import net.pwall.log.LogList
 import net.pwall.log.isDebug
@@ -91,10 +92,10 @@ class SpringTest {
                 }
             }
             assertTrue(logList.any {
-                it.name == "io.kjson.spring.JSONSpring" && it isDebug """JSON Input: {"ID":"****","name":"Me"}"""
+                it.name == loggerName && it isDebug """JSON Input: {"ID":"****","name":"Me"}"""
             })
             assertTrue(logList.any {
-                it.name == "io.kjson.spring.JSONSpring" && it isDebug "JSON Output: $expectedOutput"
+                it.name == loggerName && it isDebug "JSON Output: $expectedOutput"
             })
         }
     }
@@ -112,45 +113,56 @@ class SpringTest {
                 }
             }
             assertTrue(logList.any {
-                it.name == "io.kjson.spring.JSONSpring" && it isError """JSON Input: {"ID":"****","name":"Me"}"""
+                it.name == loggerName && it isError """JSON Input: {"ID":"****","name":"Me"}"""
             })
             assertTrue(logList.any {
-                it.name == "io.kjson.spring.JSONSpring" &&
-                        it isError "Error deserializing \"12345\" as java.util.UUID at /ID"
+                it.name == loggerName &&
+                        it isError "Error deserializing io.kjson.spring.test.RequestData - Not a valid UUID - 12345"
             })
             assertTrue(logList.any {
-                it.name == "io.kjson.spring.JSONSpring" && it isDebug "JSON Output: \"ERROR\""
+                it.name == loggerName && it isDebug "JSON Output: \"ERROR\""
             })
         }
     }
 
     @Test fun `should use kjson for client response`() {
-        val restTemplate = restTemplateBuilder.build()
-        val mockRestServiceServer = MockRestServiceServer.createServer(restTemplate)
-        mockRestServiceServer.expect(requestTo("/testclient")).andExpect(method(HttpMethod.GET)).andRespond {
-            createResponse(responseString)
+        LogList().use { logList ->
+            val restTemplate = restTemplateBuilder.build()
+            val mockRestServiceServer = MockRestServiceServer.createServer(restTemplate)
+            mockRestServiceServer.expect(requestTo("/testclient")).andExpect(method(HttpMethod.GET)).andRespond {
+                createResponse(responseString)
+            }
+            val response: ResponseData = restTemplate.getForObject("/testclient")
+            expect(LocalDate.of(2022, 7, 1)) { response.date }
+            expect("Hello!") { response.extra }
+            mockRestServiceServer.verify()
+            assertTrue(logList.any {
+                it.name == loggerName && it isDebug """JSON Input: {"DATE":"2022-07-01","extra":"Hello!"}"""
+            })
         }
-        val response: ResponseData = restTemplate.getForObject("/testclient")
-        expect(LocalDate.of(2022, 7, 1)) { response.date }
-        expect("Hello!") { response.extra }
-        mockRestServiceServer.verify()
     }
 
     @Test fun `should use kjson for client request`() {
-        val restTemplate = restTemplateBuilder.build()
-        val mockRestServiceServer = MockRestServiceServer.createServer(restTemplate)
-        mockRestServiceServer.expect(requestTo("/testclient")).andExpect(method(HttpMethod.POST)).andRespond { req ->
-            val mockRequest = req as? MockClientHttpRequest ?: throw AssertionError("Not a MockClientHttpRequest")
-            // the following line will fail if the POST data was not serialised correctly (by kjson)
-            val data: RequestData = mockRequest.bodyAsString.parseJSON() ?: throw AssertionError("Must not be null")
-            val response = ResponseData(LocalDate.of(2022, 7, 25), data.id.toString()).stringifyJSON()
-            createResponse(response)
+        LogList().use { logList ->
+            val restTemplate = restTemplateBuilder.build()
+            val mockRestServiceServer = MockRestServiceServer.createServer(restTemplate)
+            mockRestServiceServer.expect(requestTo("/testclient")).andExpect(method(HttpMethod.POST)).andRespond { r ->
+                    val mockRequest = r as? MockClientHttpRequest ?: throw AssertionError("Not a MockClientHttpRequest")
+                    // the following line will fail if the POST data was not serialised correctly (by kjson)
+                    val data: RequestData =
+                        mockRequest.bodyAsString.parseJSON() ?: throw AssertionError("Must not be null")
+                    val response = ResponseData(LocalDate.of(2022, 7, 25), data.id.toString()).stringifyJSON()
+                    createResponse(response)
+                }
+            val id = UUID.fromString("79c2e130-0bb7-11ed-99fa-e322ce878a96")
+            val response: ResponseData = restTemplate.postForObject("/testclient", RequestData(id, "Anything"))
+            expect(LocalDate.of(2022, 7, 25)) { response.date }
+            expect(id.toString()) { response.extra }
+            mockRestServiceServer.verify()
+            assertTrue(logList.any {
+                it.name == loggerName && it isDebug """JSON Output: {"ID":"****","name":"Anything"}"""
+            })
         }
-        val id = UUID.fromString("79c2e130-0bb7-11ed-99fa-e322ce878a96")
-        val response: ResponseData = restTemplate.postForObject("/testclient", RequestData(id, "Anything"))
-        expect(LocalDate.of(2022, 7, 25)) { response.date }
-        expect(id.toString()) { response.extra }
-        mockRestServiceServer.verify()
     }
 
     private fun createResponse(str: String) = MockClientHttpResponse(str.toByteArray(), HttpStatus.OK).apply {
@@ -158,6 +170,8 @@ class SpringTest {
     }
 
     companion object {
+        val loggerName = JSONSpring::class.qualifiedName
+        @Suppress("ConstPropertyName")
         const val responseString = """{"DATE":"2022-07-01","extra":"Hello!"}"""
     }
 
