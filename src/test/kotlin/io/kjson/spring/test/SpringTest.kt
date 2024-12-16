@@ -26,8 +26,6 @@
 package io.kjson.spring.test
 
 import kotlin.test.Test
-import kotlin.test.assertTrue
-import kotlin.test.expect
 
 import java.time.LocalDate
 import java.util.UUID
@@ -51,6 +49,8 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
+
+import io.kstuff.test.shouldBe
 
 import io.kjson.parseJSON
 import io.kjson.spring.JSONSpring
@@ -91,12 +91,12 @@ class SpringTest {
                     string(expectedOutput)
                 }
             }
-            assertTrue(logList.any {
+            logList.any {
                 it.name == loggerName && it isDebug """JSON Input: {"ID":"****","name":"Me"}"""
-            })
-            assertTrue(logList.any {
+            } shouldBe true
+            logList.any {
                 it.name == loggerName && it isDebug "JSON Output: $expectedOutput"
-            })
+            } shouldBe true
         }
     }
 
@@ -112,16 +112,16 @@ class SpringTest {
                     string("\"ERROR\"")
                 }
             }
-            assertTrue(logList.any {
+            logList.any {
                 it.name == loggerName && it isError """JSON Input: {"ID":"****","name":"Me"}"""
-            })
-            assertTrue(logList.any {
+            } shouldBe true
+            logList.any {
                 it.name == loggerName &&
                         it isError "Error deserializing io.kjson.spring.test.RequestData - Not a valid UUID - 12345"
-            })
-            assertTrue(logList.any {
+            } shouldBe true
+            logList.any {
                 it.name == loggerName && it isDebug "JSON Output: \"ERROR\""
-            })
+            } shouldBe true
         }
     }
 
@@ -133,12 +133,12 @@ class SpringTest {
                 createResponse(responseString)
             }
             val response: ResponseData = restTemplate.getForObject("/testclient")
-            expect(LocalDate.of(2022, 7, 1)) { response.date }
-            expect("Hello!") { response.extra }
+            response.date shouldBe LocalDate.of(2022, 7, 1)
+            response.extra shouldBe "Hello!"
             mockRestServiceServer.verify()
-            assertTrue(logList.any {
+            logList.any {
                 it.name == loggerName && it isDebug """JSON Input: {"DATE":"2022-07-01","extra":"Hello!"}"""
-            })
+            } shouldBe true
         }
     }
 
@@ -156,12 +156,12 @@ class SpringTest {
                 }
             val id = UUID.fromString("79c2e130-0bb7-11ed-99fa-e322ce878a96")
             val response: ResponseData = restTemplate.postForObject("/testclient", RequestData(id, "Anything"))
-            expect(LocalDate.of(2022, 7, 25)) { response.date }
-            expect(id.toString()) { response.extra }
+            response.date shouldBe LocalDate.of(2022, 7, 25)
+            response.extra shouldBe id.toString()
             mockRestServiceServer.verify()
-            assertTrue(logList.any {
+            logList.any {
                 it.name == loggerName && it isDebug """JSON Output: {"ID":"****","name":"Anything"}"""
-            })
+            } shouldBe true
         }
     }
 
