@@ -31,6 +31,10 @@ import java.lang.reflect.Type
 
 import org.springframework.http.converter.json.AbstractJsonHttpMessageConverter
 
+import io.jstuff.log.Level
+import io.jstuff.log.Logger
+import io.jstuff.log.LoggerFactory
+
 import io.kjson.JSON.appendJSONValue
 import io.kjson.JSON.elidedValue
 import io.kjson.JSON.toJSON
@@ -41,9 +45,6 @@ import io.kjson.JSONStringify.appendJSON
 import io.kjson.JSONValue
 import io.kjson.fromJSONValue
 import io.kjson.parser.Parser
-import net.pwall.log.Level
-import net.pwall.log.Logger
-import net.pwall.log.LoggerFactory
 
 /**
  * Spring message converter to convert messages to and from JSON using the [kjson](https://github.com/pwall567/kjson)

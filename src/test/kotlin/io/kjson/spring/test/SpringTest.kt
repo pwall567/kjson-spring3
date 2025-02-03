@@ -52,12 +52,13 @@ import org.springframework.web.client.postForObject
 
 import io.kstuff.test.shouldBe
 
+import io.jstuff.log.LogList
+import io.kstuff.log.isDebug
+import io.kstuff.log.isError
+
 import io.kjson.parseJSON
 import io.kjson.spring.JSONSpring
 import io.kjson.stringifyJSON
-import net.pwall.log.LogList
-import net.pwall.log.isDebug
-import net.pwall.log.isError
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(classes = [SpringTestConfiguration::class])

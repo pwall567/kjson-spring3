@@ -32,9 +32,10 @@ import org.springframework.context.annotation.Bean
 import org.springframework.core.Ordered
 import org.springframework.http.converter.HttpMessageConverter
 
+import io.jstuff.log.Level
+import io.jstuff.log.LoggerFactory
+
 import io.kjson.JSONConfig
-import net.pwall.log.Level
-import net.pwall.log.LoggerFactory
 
 /**
  * Auto-configuration class for `kjson` and Spring Boot 3.

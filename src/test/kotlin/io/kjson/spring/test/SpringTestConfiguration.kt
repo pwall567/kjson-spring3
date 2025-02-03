@@ -25,9 +25,9 @@
 
 package io.kjson.spring.test
 
-import net.pwall.log.DynamicLoggerFactory
-import net.pwall.log.Level
-import net.pwall.log.LoggerFactory
+import io.jstuff.log.DynamicLoggerFactory
+import io.jstuff.log.Level
+import io.jstuff.log.LoggerFactory
 
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
