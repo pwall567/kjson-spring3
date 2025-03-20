@@ -52,9 +52,9 @@ import org.springframework.web.client.postForObject
 
 import io.kstuff.test.shouldBe
 
-import io.jstuff.log.LogList
-import io.kstuff.log.isDebug
-import io.kstuff.log.isError
+import io.kstuff.log.LogList
+import io.kstuff.log.shouldHaveDebug
+import io.kstuff.log.shouldHaveError
 
 import io.kjson.parseJSON
 import io.kjson.spring.JSONSpring
@@ -80,7 +80,7 @@ class SpringTest {
     }
 
     @Test fun `should use kjson for input`() {
-        LogList().use { logList ->
+        LogList(loggerName).use { logList ->
             val expectedOutput = """{"DATE":"2022-07-04","extra":"0e457a9e-fb40-11ec-84d9-a324b304f4f9"}"""
             mockMvc.post("/testendpoint") {
                 contentType = MediaType.APPLICATION_JSON
@@ -92,17 +92,13 @@ class SpringTest {
                     string(expectedOutput)
                 }
             }
-            logList.any {
-                it.name == loggerName && it isDebug """JSON Input: {"ID":"****","name":"Me"}"""
-            } shouldBe true
-            logList.any {
-                it.name == loggerName && it isDebug "JSON Output: $expectedOutput"
-            } shouldBe true
+            logList shouldHaveDebug """JSON Input: {"ID":"****","name":"Me"}"""
+            logList shouldHaveDebug "JSON Output: $expectedOutput"
         }
     }
 
     @Test fun `should log error on invalid JSON input`() {
-        LogList().use { logList ->
+        LogList(loggerName).use { logList ->
             mockMvc.post("/testendpoint") {
                 contentType = MediaType.APPLICATION_JSON
                 content = """{"ID":"12345","name":"Me"}"""
@@ -113,21 +109,14 @@ class SpringTest {
                     string("\"ERROR\"")
                 }
             }
-            logList.any {
-                it.name == loggerName && it isError """JSON Input: {"ID":"****","name":"Me"}"""
-            } shouldBe true
-            logList.any {
-                it.name == loggerName &&
-                        it isError "Error deserializing io.kjson.spring.test.RequestData - Not a valid UUID - 12345"
-            } shouldBe true
-            logList.any {
-                it.name == loggerName && it isDebug "JSON Output: \"ERROR\""
-            } shouldBe true
+            logList shouldHaveError """JSON Input: {"ID":"****","name":"Me"}"""
+            logList shouldHaveError "Error deserializing io.kjson.spring.test.RequestData - Not a valid UUID - 12345"
+            logList shouldHaveDebug "JSON Output: \"ERROR\""
         }
     }
 
     @Test fun `should use kjson for client response`() {
-        LogList().use { logList ->
+        LogList(loggerName).use { logList ->
             val restTemplate = restTemplateBuilder.build()
             val mockRestServiceServer = MockRestServiceServer.createServer(restTemplate)
             mockRestServiceServer.expect(requestTo("/testclient")).andExpect(method(HttpMethod.GET)).andRespond {
@@ -137,14 +126,12 @@ class SpringTest {
             response.date shouldBe LocalDate.of(2022, 7, 1)
             response.extra shouldBe "Hello!"
             mockRestServiceServer.verify()
-            logList.any {
-                it.name == loggerName && it isDebug """JSON Input: {"DATE":"2022-07-01","extra":"Hello!"}"""
-            } shouldBe true
+            logList shouldHaveDebug """JSON Input: {"DATE":"2022-07-01","extra":"Hello!"}"""
         }
     }
 
     @Test fun `should use kjson for client request`() {
-        LogList().use { logList ->
+        LogList(loggerName).use { logList ->
             val restTemplate = restTemplateBuilder.build()
             val mockRestServiceServer = MockRestServiceServer.createServer(restTemplate)
             mockRestServiceServer.expect(requestTo("/testclient")).andExpect(method(HttpMethod.POST)).andRespond { r ->
@@ -160,9 +147,7 @@ class SpringTest {
             response.date shouldBe LocalDate.of(2022, 7, 25)
             response.extra shouldBe id.toString()
             mockRestServiceServer.verify()
-            logList.any {
-                it.name == loggerName && it isDebug """JSON Output: {"ID":"****","name":"Anything"}"""
-            } shouldBe true
+            logList shouldHaveDebug """JSON Output: {"ID":"****","name":"Anything"}"""
         }
     }
 

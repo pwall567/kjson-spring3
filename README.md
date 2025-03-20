@@ -3,7 +3,7 @@
 [![Build Status](https://github.com/pwall567/kjson-spring3/actions/workflows/build.yml/badge.svg)](https://github.com/pwall567/kjson-spring3/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Kotlin](https://img.shields.io/static/v1?label=Kotlin&message=v2.0.21&color=7f52ff&logo=kotlin&logoColor=7f52ff)](https://github.com/JetBrains/kotlin/releases/tag/v2.0.21)
-[![Maven Central](https://img.shields.io/maven-central/v/io.kjson/kjson-spring3?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.kjson%22%20AND%20a:%22kjson-spring3%22)
+[![Maven Central](https://img.shields.io/maven-central/v/io.kjson/kjson-spring3?label=Maven%20Central)](https://central.sonatype.com/artifact/io.kjson/kjson-spring3)
 
 Spring Boot 3 JSON message converter for [`kjson`](https://github.com/pwall567/kjson).
 
@@ -93,19 +93,18 @@ and:
 `kjson-spring` can be configured to log all messages processed by the JSON converter, input and output.
 To make use of this functionality, the `jsonLogFactory` must be configured, as follows:
 ```kotlin
-    @Bean open fun jsonLogFactory(): LoggerFactory<*> = Log.getDefaultLoggerFactory()
+    @Bean open fun jsonLogFactory(): LoggerFactory<*> = getDefaultLoggerFactory()
 ```
 
 The `LoggerFactory` in this case is from the [log-front-api](https://github.com/pwall567/log-front-api) library;
 this is a logging fa&ccedil;ade library which will delegate to any of a number of implementations.
-The example above uses the `DynamicLoggerFactory` class from the [log-front](https://github.com/pwall567/log-front)
-library, and this implementation uses `slf4j` if those classes are present (they generally are in a Spring application),
-or the Java Logging framework if a configuration file for that system is specified, or if no other logging mechanism is
-available, logs to the standard output.
+The example above uses the default logger factory class from the
+[log-front-kotlin](https://github.com/pwall567/log-front-kotlin) library, and the usual implementation uses `slf4j` if
+those classes are present (they generally are in a Spring application), or the Java Logging framework if a configuration
+file for that system is specified, or if no other logging mechanism is available, logs to the standard output.
 
-For the majority of users who do not wish to learn another logging library, the example above will meet most
-requirements (the `Level.Debug` in the example is the default level to be used by `Logger` objects created by this
-`LoggerFactory`).
+For the majority of users who do not wish to learn another logging library, specifying the log factory as in the example
+above will meet most requirements.
 
 The name of the `Logger` may also be specified:
 ```kotlin
@@ -135,13 +134,13 @@ structure.
 The following will log all input and output with `Level` `INFO`, eliding all fields named `accountNumber`:
 ```kotlin
 import org.springframework.context.annotation.Configuration
-import net.pwall.log.Level
-import net.pwall.log.Log
-import net.pwall.log.LogggerFactory
+import io.kstuff.log.Level
+import io.kstuff.log.Log
+import io.kstuff.log.LogggerFactory
 
 @Configuration
 open class JSONConfiguration {
-    @Bean open fun jsonLogFactory(): LoggerFactory<*> = Log.getDefaultLoggerFactory()
+    @Bean open fun jsonLogFactory(): LoggerFactory<*> = getDefaultLoggerFactory()
     @Bean open fun jsonLogLevel(): Level = Level.INFO
     @Bean open fun jsonLogExclude(): Set<String> = setOf("accountNumber")
 }
@@ -149,28 +148,28 @@ open class JSONConfiguration {
 
 ## Dependency Specification
 
-The latest version of the library is 9.6 (the version number of this library matches the version of `kjson` with which
+The latest version of the library is 9.7 (the version number of this library matches the version of `kjson` with which
 it was built), and it may be obtained from the Maven Central repository.
 
-This version was built using version 6.2.2 of Spring, and version 3.4.2 of Spring Boot.
+This version was built using version 6.2.4 of Spring, and version 3.4.3 of Spring Boot.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>io.kjson</groupId>
       <artifactId>kjson-spring3</artifactId>
-      <version>9.6</version>
+      <version>9.7</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'io.kjson:kjson-spring3:9.6'
+    implementation 'io.kjson:kjson-spring3:9.7'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("io.kjson:kjson-spring3:9.6")
+    implementation("io.kjson:kjson-spring3:9.7")
 ```
 
 Peter Wall
 
-2025-02-09
+2025-03-20

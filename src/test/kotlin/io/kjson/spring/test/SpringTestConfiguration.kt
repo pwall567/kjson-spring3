@@ -25,9 +25,9 @@
 
 package io.kjson.spring.test
 
-import io.jstuff.log.DynamicLoggerFactory
-import io.jstuff.log.Level
-import io.jstuff.log.LoggerFactory
+import io.kstuff.log.DynamicLoggerFactory
+import io.kstuff.log.Level
+import io.kstuff.log.LoggerFactory
 
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
