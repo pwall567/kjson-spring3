@@ -148,28 +148,28 @@ open class JSONConfiguration {
 
 ## Dependency Specification
 
-The latest version of the library is 9.7 (the version number of this library matches the version of `kjson` with which
+The latest version of the library is 9.9 (the version number of this library matches the version of `kjson` with which
 it was built), and it may be obtained from the Maven Central repository.
 
-This version was built using version 6.2.4 of Spring, and version 3.4.3 of Spring Boot.
+This version was built using version 6.2.7 of Spring, and version 3.5.0 of Spring Boot.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>io.kjson</groupId>
       <artifactId>kjson-spring3</artifactId>
-      <version>9.7</version>
+      <version>9.9</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'io.kjson:kjson-spring3:9.7'
+    implementation 'io.kjson:kjson-spring3:9.9'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("io.kjson:kjson-spring3:9.7")
+    implementation("io.kjson:kjson-spring3:9.9")
 ```
 
 Peter Wall
 
-2025-03-20
+2025-06-10

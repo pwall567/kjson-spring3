@@ -2,7 +2,7 @@
  * @(#) SpringTest.kt
  *
  * kjson-spring3  Spring Boot 3 JSON message converter for kjson
- * Copyright (c) 2022, 2023, 2024 Peter Wall
+ * Copyright (c) 2022, 2023, 2024, 2025 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -55,6 +55,7 @@ import io.kstuff.test.shouldBe
 import io.kstuff.log.LogList
 import io.kstuff.log.shouldHaveDebug
 import io.kstuff.log.shouldHaveError
+import io.kstuff.log.shouldHaveErrorContaining
 
 import io.kjson.parseJSON
 import io.kjson.spring.JSONSpring
@@ -110,7 +111,7 @@ class SpringTest {
                 }
             }
             logList shouldHaveError """JSON Input: {"ID":"****","name":"Me"}"""
-            logList shouldHaveError "Error deserializing io.kjson.spring.test.RequestData - Not a valid UUID - 12345"
+            logList shouldHaveErrorContaining  "Not a valid UUID - \"12345\", at /ID"
             logList shouldHaveDebug "JSON Output: \"ERROR\""
         }
     }
